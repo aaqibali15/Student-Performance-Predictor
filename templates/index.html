@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Score Predictor</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  .overlay {
+    background: rgba(34, 40, 49, 0.90); /* Deep blue-gray overlay */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 50px 60px;
+    margin: 50px auto;
+    max-width: 950px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+  }
+  h2 {
+    text-align: center;
+    font-weight: 800;
+    margin-bottom: 40px;
+    color: #fff;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+    letter-spacing: 1.2px;
+  }
+  label {
+    font-weight: 700;
+    color: #eaf6fb;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  }
+  .form-control, .form-select {
+    background-color: #f7fbff;
+    border: none;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.10);
+    color: #222;
+    font-weight: 600;
+  }
+  .form-text {
+    color: #b0c4de; /* Soft blue-gray */
+    font-size: 0.92em;
+    margin-top: 3px;
+  }
+  .btn-primary {
+    background-color: #1976d2; /* Modern blue */
+    border: none;
+    font-weight: 800;
+    font-size: 1.2rem;
+    padding: 14px 0;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    border-radius: 8px;
+    letter-spacing: 0.5px;
+  }
+  .btn-primary:hover {
+    background-color: #0d47a1;
+  }
+  .header-links {
+    text-align: center;
+    margin-bottom: 30px;
+    margin-top: 20px;
+  }
+  .header-links a {
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: #1976d2;
+    margin: 0 20px;
+    text-decoration: none;
+    padding: 10px 25px;
+    border: 2px solid #1976d2;
+    border-radius: 30px;
+    background: #f7fbff;
+    transition: background-color 0.3s, color 0.3s;
+    display: inline-block;
+    box-shadow: 0 2px 10px rgba(25, 118, 210, 0.1);
+  }
+  .header-links a:hover {
+    background-color: #1976d2;
+    color: #fff;
+  }
+</style>
+
+
+<body>
+  <div class="container mt-4 header-links">
+    <a href="{{ url_for('login') }}">Sign In</a>
+    <a href="{{ url_for('signup') }}">Sign Up</a>
+  </div>
+  <div class="overlay">
+    <h2>🎓 Predict Your Exam Score</h2>
+    <form action="{{ url_for('predict') }}" method="post">
+      <div class="row g-3">
+
+        <!-- Study Hours -->
+        <div class="col-md-6">
+          <label>Study Hours</label>
+          <input type="number" name="study_hours" class="form-control" min="2" max="9" step="0.1" required>
+          <div class="form-text">Enter the average number of hours you study daily (between 2 and 9).</div>
+        </div>
+
+        <!-- Sleep Hours -->
+        <div class="col-md-6">
+          <label>Sleep Hours</label>
+          <input type="number" name="sleep_hours" class="form-control" min="4" max="9" step="0.1" required>
+          <div class="form-text">Enter the average number of hours you sleep daily (recommended 4–8 hours).</div>
+        </div>
+
+        <!-- Assignment Submitted -->
+        <div class="col-md-6">
+          <label>Assignment Submitted</label>
+          <select name="assignment" class="form-select" required>
+            <option>Yes</option>
+            <option>No</option>
+          </select>
+          <div class="form-text">Select "Yes" if you have submitted all assignments, otherwise "No".</div>
+        </div>
+
+        <!-- Topics to Cover -->
+        <div class="col-md-6">
+          <label>Topics to Cover</label>
+          <input type="number" name="topics" class="form-control" min="1" max="10" required>
+          <div class="form-text">How many topics are left to study before the exam? (1–10)</div>
+        </div>
+
+        <!-- Topic Difficulty -->
+        <div class="col-md-6">
+          <label>Topic Difficulty</label>
+          <select name="difficulty" class="form-select" required>
+            <option>Low</option>
+            <option>Medium</option>
+            <option>High</option>
+          </select>
+          <div class="form-text">
+            <strong>Low:</strong> Easy topics.<br>
+            <strong>Medium:</strong> Moderate difficulty.<br>
+            <strong>High:</strong> Very challenging topics.
+          </div>
+        </div>
+
+        <!-- Learning Capacity -->
+        <div class="col-md-6">
+          <label>Learning Capacity</label>
+          <select name="capacity" class="form-select" required>
+            <option>Low</option>
+            <option>Medium</option>
+            <option>High</option>
+          </select>
+          <div class="form-text">
+            <strong>Low:</strong> Need more time to understand.<br>
+            <strong>Medium:</strong> Average learning speed.<br>
+            <strong>High:</strong> Grasp concepts quickly.
+          </div>
+        </div>
+
+        <!-- Previous Test Score -->
+        <div class="col-md-6">
+          <label>Previous Test Score</label>
+          <input type="number" name="previous_score" class="form-control" min="0" max="100" required>
+          <div class="form-text">Enter your last test score as a percentage (0–100).</div>
+        </div>
+
+        <!-- Class Participation -->
+        <div class="col-md-6">
+          <label>Class Participation</label>
+          <select name="participation" class="form-select" required>
+            <option>Low</option>
+            <option>Medium</option>
+            <option>High</option>
+          </select>
+          <div class="form-text">
+            <strong>Low:</strong> Rarely participate.<br>
+            <strong>Medium:</strong> Sometimes participate.<br>
+            <strong>High:</strong> Actively participate.
+          </div>
+        </div>
+
+        <!-- Concentration Level -->
+        <div class="col-md-6">
+          <label>Concentration Level</label>
+          <input type="number" name="concentration" class="form-control" min="1" max="5" required>
+          <div class="form-text">
+            Rate your concentration while studying (1 = very low, 5 = very high).
+          </div>
+        </div>
+
+        <!-- Distraction Time -->
+        <div class="col-md-6">
+          <label>Distraction Time</label>
+          <input type="number" name="distraction" class="form-control" min="0" max="6" step="0.1" required>
+          <div class="form-text">
+            Average hours per day spent distracted (0–6 hours).
+          </div>
+        </div>
+
+        <!-- Health Status -->
+        <div class="col-md-6">
+          <label>Health Status</label>
+          <select name="health" class="form-select" required>
+            <option>Healthy</option>
+            <option>Okay</option>
+            <option>Sick</option>
+          </select>
+          <div class="form-text">
+            <strong>Healthy:</strong> No health issues.<br>
+            <strong>Okay:</strong> Minor issues.<br>
+            <strong>Sick:</strong> Significant health issues.
+          </div>
+        </div>
+
+        <!-- Study Environment -->
+        <div class="col-md-6">
+          <label>Study Environment</label>
+          <select name="environment" class="form-select" required>
+            <option>Quiet</option>
+            <option>Neutral</option>
+            <option>Distracting</option>
+          </select>
+          <div class="form-text">
+            <strong>Quiet:</strong> No distractions.<br>
+            <strong>Neutral:</strong> Sometimes distracted.<br>
+            <strong>Distracting:</strong> Many distractions.
+          </div>
+        </div>
+
+        <!-- Revision Done -->
+        <div class="col-md-6">
+          <label>Revision Done</label>
+          <select name="revision" class="form-select" required>
+            <option>Yes</option>
+            <option>No</option>
+          </select>
+          <div class="form-text">Select "Yes" if you have revised the topics, otherwise "No".</div>
+        </div>
+
+        <!-- Time Left for Exam -->
+        <div class="col-md-6">
+          <label>Time Left for Exam</label>
+          <input type="number" name="time_left" class="form-control" min="0" max="30" required>
+          <div class="form-text">How many days are left before your exam? (0–30)</div>
+        </div>
+
+        <!-- Practice Tests Taken -->
+        <div class="col-md-6">
+          <label>Practice Tests Taken</label>
+          <input type="number" name="practice_tests" class="form-control" min="0" max="10" required>
+          <div class="form-text">Number of practice tests you have taken (0–10).</div>
+        </div>
+
+        <!-- Topic Familiarity -->
+        <div class="col-md-6">
+          <label>Topic Familiarity</label>
+          <select name="familiarity" class="form-select" required>
+            <option>First Time</option>
+            <option>Somewhat Familiar</option>
+            <option>Revision</option>
+          </select>
+          <div class="form-text">
+            <strong>First Time:</strong> Studying this topic for the first time.<br>
+            <strong>Somewhat Familiar:</strong> Have some prior knowledge.<br>
+            <strong>Revision:</strong> Already studied, now revising.
+          </div>
+        </div>
+      </div>
+      <div class="mt-4 text-center">
+        <button type="submit" class="btn btn-primary btn-lg">Predict Score</button>
+      </div>
+    </form>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

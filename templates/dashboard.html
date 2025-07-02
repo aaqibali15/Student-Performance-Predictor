@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard - Welcome {{ username }}</title>
+  <style>
+    /* Background and layout */
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #fff;
+      overflow-x: hidden;
+      background: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
+    }
+    /* Dark overlay for readability */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: -1;
+    }
+
+    /* Container */
+    .container {
+      max-width: 600px;
+      margin: 8% auto;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+      text-align: center;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .container.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    h2 {
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+      font-weight: 700;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
+    }
+    p {
+      font-size: 1.3rem;
+      margin-bottom: 40px;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+    }
+
+    /* Buttons stacked vertically with spacing */
+    .btn {
+      display: block;
+      width: 70%;
+      max-width: 300px;
+      margin: 15px auto;
+      padding: 15px 0;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg, #4a90e2, #357ABD);
+      border: none;
+      border-radius: 50px;
+      box-shadow: 0 6px 20px rgba(53, 122, 189, 0.6);
+      cursor: pointer;
+      transition: background 0.4s ease, transform 0.2s ease;
+      text-decoration: none;
+      user-select: none;
+    }
+    .btn:hover {
+      background: linear-gradient(135deg, #357ABD, #4a90e2);
+      transform: scale(1.05);
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .container {
+        margin: 15% 20px;
+        padding: 30px 20px;
+      }
+      .btn {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="dashboard-container">
+    <h2>Welcome, {{ username }}</h2>
+    <p>What would you like to do?</p>
+    <a href="{{ url_for('view_predictions') }}" class="btn">View Previous Predictions</a>
+    <a href="{{ url_for('predict') }}" class="btn">Take New Prediction</a>
+  </div>
+
+  <script>
+    // Fade in container on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('dashboard-container');
+      setTimeout(() => {
+        container.classList.add('visible');
+      }, 100);
+    });
+  </script>
+</body>
+</html>
